@@ -1,10 +1,10 @@
-== Unjustifiable ==
+##Unjustifiable##
 
 Does a better job of justifying text than CSS alone. Can also
 cooperate with a hyphenating function; the example borrows the Hypher
 hyphenator. https://github.com/bramstein/hypher.
 
-=== More things ===
+###More things###
 
 It's a dynamic programming algorithm, like Knuth and Plass, but it's
 faster than Knuth and Plass. It accomplishes this by accepting
@@ -18,7 +18,7 @@ and so on, all work correctly.
 It is also aware of any style changes, and words around sub-elements
 -- so tags like `<strong>` and `<em>` are handled correctly.
 
-=== Usage ===
+###Usage###
 
 If you're not looking for hyphenation, using Unjustifiable is as easy
 as including the single file unjustifiable.js, and its two
@@ -34,12 +34,14 @@ dependencies (underscore and jquery), and then
 
 Where `"p"` is a jQuery selector.
 
-=== Dependencies ===
+###Dependencies###
 
 JQuery -- no need for anything bleeding-edge.
 
 Underscore.js -- because I like data-flow programming.
 
-=== Sandwich ===
+###Sandwich###
 
 I have written this instead of eating today and I am very hungry.
+
+https://www.gittip.com/diiq/
