@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
+    <title>diiq: Well-Crafted Code
+</title>
+    <link href="example.css" title="Medium" rel="stylesheet" />
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="hypher.js"></script>
+	<script src="en-us.js"></script>
+	<script src="unjustifiable.js"></script>
+    <script>
+        $(document).ready(function() {
+            var hypher = new Hypher(Hypher.en);
+            var hyphenator = function(word) {
+                if (word.length > 6) {
+                    return hypher.hyphenate(word, "en");
+                }
+                return [word];
+            }
+
+            var justify = Unjustifiable({
+                hyphenator: hyphenator,
+                hyphen_width: 4,
+                overhang: 0,
+                stretch: 10,
+            });
+            justify(".textblock > p");
+        });
+    </script>
+  </head>
+  <body>
+      <div class="page">
+         <h1 class="red">The Second Bakery Attack</h1>
+
+<div class="textblock">
+<p>I'm still not sure I made the right choice when I told my wife about the bakery attack. But then, it might not have been a question of right and wrong. Which is to say that wrong choices can produce right results, and vice versa. I myself have adopted the position that, in fact, we never choose anything at all. Things happen. Or not.</p>
+
+<p>If you look at it this way, it just so happens that I told my wife about the bakery attack. I hadn't been planning to bring it up &mdash; I had forgotten all about it &mdash; but it wasn't one of those now-that-you-mention-it kind of things, either.</p>
+
+<p>What reminded me of the bakery attack was an unbearable hunger. It hit just before two o'clock in the morning. We had eaten a light supper at six, crawled into bed at nine-thirty, and gone to sleep. For some reason, we woke up at exactly the same moment. A few minutes later, the pangs struck with the force of the tornado in The Wizard of Oz. These were tremendous, overpowering hunger pangs.</p>
+<img src="" style="float:left; width:100px; height:100px; margin: 10px" />
+<p>Our refrigerator contained not a single item that could be technically categorized as food. We had a bottle of French dressing, six cans of beer, two shriveled onions, a stick of butter, and a box of refrigerator deodorizer. With only two weeks of married life behind us, we had yet to establish a precise conjugal understanding with regard to the rules of dietary behavior. Let alone anything else.</p>
+
+<p>I had a job in a law firm at the time, and she was doing secretarial work at a design school. I was either twenty-eight or twenty-nine &mdash; why can't I remember the exact year we married? &mdash; and she was two years and eight months younger. Groceries were the last things on our minds.</p>
+
+<p>We both felt too hungry to go back to sleep, but it hurt just to lie there. On the other hand, we were also too hungry to do anything useful. We got out of bed and drifted into the kitchen, ending up across the table from each other. What could have caused such violent hunger pangs?</p>
+
+<p>We took turns opening the refrigerator door and hoping, but no matter how many times we looked inside, the contents never changed. Beer and onions and butter and dressing and deodorizer. It might have been possible to saute the onions in the butter, but there was no chance those two shriveled onions could fill our empty stomachs. Onions are meant to be eaten with other things. They are not the kind of food you use to satisfy an appetite.</p>
+
+<p>&ldquo;Would madame care for some French dressing sauteed in deodorizer?&rdquo;</p>
+
+<p>I expected her to ignore my attempt at humor, and she did. &ldquo;Let's get in the car and look for an all-night restaurant,&rdquo; I said. &ldquo;There must be one on the highway.&rdquo;</p>
+
+<p>She rejected that suggestion. &ldquo;We can't. You're not supposed to go out to eat after midnight.&rdquo; She was old-fashioned in that way.</p>
+
+<p>I breathed once and said, &ldquo;I guess not.&rdquo;</p>
+
+<p>Whenever my wife expressed such an opinion (or thesis) back then, it reverberated in my ears with the authority of a revelation. Maybe that's what happens with newlyweds, I don't know. But when she said this to me, I began to think that this was a special hunger, not one that could be satisfied through the mere expedient of taking it to an all-night restaurant on the highway.</p>
+
+<p>A special kind of hunger. And what might that be?</p>
+
+<p>I can present it here in the form of a cinematic image.</p>
+
+<p>One, I am in a little boat, floating on a quiet sea. Two, I look down, and in the water, I see the peak of a volcano thrusting up from the ocean floor. Three, the peak seems pretty close to the water's surface, but just how close I cannot tell. Four, this is because the hypertransparency of the water interferes with the perception of distance.</p>
+
+<p>This is a fairly accurate description of the image that arose in my mind during the two or three seconds between the time my wife said she refused to go to an all-night restaurant and I agreed with my &ldquo;I guess not.&rdquo; Not being Sigmund Freud, I was, of course, unable to analyze with any precision what this image signified, but I knew intuitively that it was a revelation. Which is why &mdash; the almost grotesque intensity of my hunger notwithstanding &mdash; I all but automatically agreed with her thesis (or declaration).</p>
+</div>
+      </div>
+  </body>
+</html>
