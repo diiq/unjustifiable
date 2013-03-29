@@ -124,7 +124,7 @@ var Unjustifiable = function(options){
         line_start = line_start || 0;
         _.each(elt.children, function(bit) {
             if (bit.children.length) {
-                line_lengths(elt, list, prev_height, line_start, prev_bit)
+                line_lengths(bit, list, prev_height, line_start, prev_bit);
             } else if ($(bit).text()) {
                 if (bit.offsetTop > prev_height) {
                     if (prev_bit)
@@ -139,7 +139,7 @@ var Unjustifiable = function(options){
             }
         });
         return list;
-    }
+    };
 
     /**
      * PART II: FINDING IDEAL LINEBREAK POSITIONS
@@ -253,7 +253,6 @@ var Unjustifiable = function(options){
         return reify_break_chain(ret);
     };
 
-
     /**
      * The linked list that find_breaks produces is kinda difficult to work
      * with; this function munges it into a cleaner array, with useful
@@ -340,6 +339,7 @@ var Unjustifiable = function(options){
                 text.push(bit.outerHTML);
 
                 open_span(cbreak);
+
             // Otherwise, flatten out the span-per-syllable silliness.
             } else {
                 // If this element is the element we're supposed to break on,
@@ -374,7 +374,7 @@ var Unjustifiable = function(options){
         $(elt).html(text.join(""));
     };
 
-    return function($thing) {
+    var unjust = function($thing) {
         var a = $($thing);
         a.each(function(i, e) {
             spanify_element(e);
@@ -385,4 +385,6 @@ var Unjustifiable = function(options){
             despanify_element(e, best_breaks);
         });
     };
+    unjust.options = options;
+    return unjust;
 };
