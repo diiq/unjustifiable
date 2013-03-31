@@ -14,12 +14,18 @@ body {
     width: 320px;
 }
 
+.css {
+    width: 312px;
+    padding-right: 8px;
+}
+
 p {
     text-indent: 20px;
     padding: 0;
     margin: 5px 0px;
     text-align:justify;
 }
+
 
 .buttons {
     float:left;

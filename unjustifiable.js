@@ -36,32 +36,39 @@ var Unjustifiable = function(options){
         return "<span class='box'>" + wordlet + "</span>";
     };
 
+    var punctuation_span = function(wordlet) {
+        return "<span class='punctuation'>" + wordlet + "</span>";
+    };
+
     var penalty_span = function() {
         return "<span class='penalty'></span>";
     };
 
     var spanify_word = function(word) {
-        // Have to be fancy to cope with hard hyphens; hyphenate each part and
-        // join with a hyphen in a box and a 0-width glue.
-        var words = word.split(/\-/);
-        if (words.length > 1){
-            words = _.map(words, spanify_word);
-            return words.join(box_span("-") + glue_span(""));
-        } else {
-            var syllables = options.hyphenator(word);
-            var spanified_word = box_span(syllables[0]);
-            for (var i = 1; i < syllables.length; i++) {
-                spanified_word += penalty_span();
-                spanified_word += box_span(syllables[i]);
-            }
-            return spanified_word;
+        // Ideally, word-joining punctuation will overhang the text, making a more
+        // orderly margin. Here, we split out any such punctuation.
+        var syllables = options.hyphenator(word);
+        var spanified_word = box_span(syllables[0]);
+        for (var i = 1; i < syllables.length; i++) {
+            spanified_word += penalty_span();
+            spanified_word += box_span(syllables[i]);
         }
+        return spanified_word;
     };
-
+    var glue_regex = /(&nbsp;|&mdash;|[\—\-]|[\—\-\.\,\/\;\:\)\]\}]&nbsp;)/;
     var spanify_text = function(text) {
-        var words = text.split(/ +/);
-        var spanned_words = _.map(words, spanify_word);
-        return spanned_words.join(glue_span("&nbsp;") + " ");
+        text = text.replace(/ /g, "&nbsp;");
+        var words = text.split(glue_regex);
+        var spanned_words = _.map(words, function(word, i) {
+            if (word.match(glue_regex)) {
+                return glue_span(word) + " ";
+            } else if (word) {
+                return spanify_word(word);
+            } else {
+                return "";
+            }
+        });
+        return spanned_words.join("");
     };
 
     var spanify_element = function(elt) {
@@ -100,10 +107,11 @@ var Unjustifiable = function(options){
                 wordlet = {type: $(bit).attr("class"),
                            span: bit,
                            width: bit.offsetWidth};
-                if (wordlet.type === "glue" && $(bit).text()) {
-                    wordlet.width = options.space;
+                if (wordlet.type === "glue") {
+                    if ($(bit).html().match("&nbsp;")) {
                     wordlet.stretch = options.stretch;
                     wordlet.shrink = options.shrink;
+}
                 } else if (wordlet.type === "penalty") {
                     wordlet.cost = options.hyphen_penalty;
                     wordlet.width = 0;
@@ -125,7 +133,7 @@ var Unjustifiable = function(options){
         _.each(elt.children, function(bit) {
             if (bit.children.length) {
                 line_lengths(bit, list, prev_height, line_start, prev_bit);
-            } else if ($(bit).text()) {
+            } else if ($(bit).html()) {
                 if (bit.offsetTop > prev_height) {
                     if (prev_bit)
                         list.push(prev_bit.offsetLeft +
@@ -154,10 +162,10 @@ var Unjustifiable = function(options){
     var measure_wordlets = function(wordlets, start, end) {
         var add = function(a, b) { return a + b; };
         var slice = wordlets.slice(start, end);
-        while (slice[0].type === "glue") {
+        while (slice.length && slice[0].type === "glue") {
             slice = slice.slice(1);
         }
-        while (slice[slice.length - 1].type === "glue") {
+        while (slice.length && slice[slice.length - 1].type === "glue") {
             slice.pop();
         }
         var additional_width = 0;
@@ -346,20 +354,21 @@ var Unjustifiable = function(options){
                 // add a line break!
                 if (cbreak && bit === cbreak.break_element) {
                     // If we're mid-word (a penalty) add a hyphen.
+                    close_span();
                     if ($bit.attr("class") == "penalty")
                         text.push("-");
+                    text.push($bit.html());
                     linebreaks.pop();
-                    close_span();
                     text.push('<br />');
 
                     cbreak = linebreaks[linebreaks.length - 1];
                     open_span(cbreak);
 
                 } else if ($bit.attr("class") === "box") {
-                    text.push($bit.text());
+                    text.push($bit.html());
 
                 } else if ($bit.attr("class") === "glue") {
-                    text.push($bit.text());
+                    text.push($bit.html());
                     cbreak.glues_so_far++;
                     if (cbreak.glues_so_far === cbreak.first_count) {
                         // It's time to change to a different word spacing.
@@ -378,8 +387,12 @@ var Unjustifiable = function(options){
         var a = $($thing);
         a.each(function(i, e) {
             spanify_element(e);
-            var wordlets = list_wordlets(e);
+            $(e).css("text-align: justify");
             var line_length = line_lengths(e);
+            $(e).html($(e).html().replace(/> /g, ">"));
+            $(e).css("text-align", "left");
+            var wordlets = list_wordlets(e);
+                   console.log(line_length);
             line_length.push(line_length[line_length.length - 1]);
             var best_breaks = find_breaks(wordlets, line_length);
             despanify_element(e, best_breaks);
