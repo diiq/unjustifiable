@@ -392,7 +392,6 @@ var Unjustifiable = function(options){
             $(e).html($(e).html().replace(/> /g, ">"));
             $(e).css("text-align", "left");
             var wordlets = list_wordlets(e);
-                   console.log(line_length);
             line_length.push(line_length[line_length.length - 1]);
             var best_breaks = find_breaks(wordlets, line_length);
             despanify_element(e, best_breaks);
