@@ -11,7 +11,7 @@ var Unjustifiable = function(options){
     options.hyphen_width = options.hyphen_width || 0;
     options.overhang = options.overhang == undefined ? 6 : options.overhang;;
     // This is a cost, which is measured in mostly-meaningless units: px^2
-    options.hyphen_penalty = options.hyphen_penalty || 500;
+    options.hyphen_penalty = options.hyphen_penalty || 700;
 
     /**
      * PART I: PARSING, HYPHENATING, AND MEASURING THE TEXT
@@ -55,7 +55,7 @@ var Unjustifiable = function(options){
         }
         return spanified_word;
     };
-    var glue_regex = /(&nbsp;|&mdash;|[\—\-]|[\—\-\.\,\/\;\:\)\]\}]&nbsp;)/;
+    var glue_regex = /(&nbsp;|&mdash;|[\—\-]|[\—\-\.\,\/\;\:\)\]\}\?](?:&nbsp;)?)/;
     var spanify_text = function(text) {
         text = text.replace(/ /g, "&nbsp;");
         var words = text.split(glue_regex);
@@ -91,33 +91,44 @@ var Unjustifiable = function(options){
         elt.html(new_html);
     };
 
+    /** Walking the DOM in this particular way happens several times,
+     * so I've pulled it out into a utility function.
+     */
+    var walk_elt = function(elt, during, before, after, before_rec, after_rec) {
+        if (before) before(bit);
+        _.each(elt.children, function(bit) {
+            if (bit.children.length) {
+                if (before_rec) before_rec(bit);
+                var rec = walk_elt(bit, during, before, after, before_rec, after_rec);
+                if (after_rec) after_rec(bit, rec);
+            } else {
+                if (during) during(bit);
+            }
+        });
+        if (after) return after(bit);
+    };
+
     /**
      * list_wordlets takes a DOM element that has already been spanified, and makes
      * an array of dictionaries that summarizes the important data about the
      * word-fragments therein.
      * It's recursive to cope with nested elements (<strong>, <em>, etc.)
      */
-    var list_wordlets = function(elt, list) {
-        var wordlet;
-        list = list || [];
-        _.each(elt.children, function(bit) {
-            if (bit.children.length) {
-                list_wordlets(bit, list);
-            } else {
-                wordlet = {type: $(bit).attr("class"),
-                           span: bit,
-                           width: bit.offsetWidth};
-                if (wordlet.type === "glue") {
-                    if ($(bit).html().match("&nbsp;")) {
-                    wordlet.stretch = options.stretch;
-                    wordlet.shrink = options.shrink;
-}
-                } else if (wordlet.type === "penalty") {
-                    wordlet.cost = options.hyphen_penalty;
-                    wordlet.width = 0;
-                }
-                list.push(wordlet);
+
+    var list_wordlets = function(elt, divisor) {
+        var list = [];
+        walk_elt(elt, function(bit) {
+            var wordlet = {type: $(bit).attr("class"),
+                       span: bit,
+                       width: bit.offsetWidth / divisor};
+            if (wordlet.type === "glue" && $(bit).html().match("&nbsp;")) {
+                wordlet.stretch = options.stretch;
+                wordlet.shrink = options.shrink;
+            } else if (wordlet.type === "penalty") {
+                wordlet.cost = options.hyphen_penalty;
+                wordlet.width = 0;
             }
+            list.push(wordlet);
         });
         return list;
     };
@@ -126,27 +137,43 @@ var Unjustifiable = function(options){
      * line_lengths takes an element that has been spanified and produces a list
      * of line-lengths. Expects the text-block to be css-justified.
      */
-    var line_lengths = function(elt, list, prev_height, line_start, prev_bit) {
-        list = list || [];
-        prev_height = prev_height || 0;
-        line_start = line_start || 0;
-        _.each(elt.children, function(bit) {
-            if (bit.children.length) {
-                line_lengths(bit, list, prev_height, line_start, prev_bit);
-            } else if ($(bit).html()) {
-                if (bit.offsetTop > prev_height) {
-                    if (prev_bit)
-                        list.push(prev_bit.offsetLeft +
-                                  prev_bit.offsetWidth -
-                                  line_start -
-                                  options.overhang);
-                        line_start = bit.offsetLeft;
-                }
-                prev_height = bit.offsetTop;
-                prev_bit = bit;
+    var line_lengths = function(elt) {
+        var list = [];
+        var prev_height = 0;
+        var line_start = 0;
+        var prev_bit = null;
+        walk_elt(elt, function(bit) {
+            if (bit.offsetTop > prev_height) {
+                if (prev_bit)
+                    list.push(prev_bit.offsetLeft +
+                              prev_bit.offsetWidth -
+                              line_start -
+                              options.overhang);
+                    line_start = bit.offsetLeft;
             }
+            prev_height = bit.offsetTop;
+            prev_bit = bit;
         });
         return list;
+    };
+
+
+    /**
+     * n_times_bigger is a really silly function. Here's the deal:
+     * browsers that zoom -- all browsers, but particularly mobile
+     * browsers, do this stupid thing where they report whole-number
+     * dimensions, but *use* fractional pixel dimensions. This really
+     * messes up the game of measuring word sizes (things can be off
+     * by 5-10 pixels by the end of a line.
+     *
+     * So what we do is we measure *ten times* the string, and divide
+     * by ten. Poor man's floating point.
+     */
+
+    var n_times_bigger = function(elt, times) {
+        walk_elt(elt, function(bit) {
+            bit.innerHTML = _.times(times, function(){return bit.innerHTML;}).join("");
+        });
     };
 
     /**
@@ -323,7 +350,7 @@ var Unjustifiable = function(options){
      *
      * So apologies aside, this is messy but necessary.
      */
-    var despanify_element = function(elt, linebreaks) {
+    var despanify_element = function(elt, linebreaks, divisor) {
         // cbreak is the current line break.
         var cbreak = linebreaks[linebreaks.length - 1];
         var text = [];
@@ -350,6 +377,7 @@ var Unjustifiable = function(options){
 
             // Otherwise, flatten out the span-per-syllable silliness.
             } else {
+                var bittext = bit.innerHTML.slice(0, bit.innerHTML.length/divisor);
                 // If this element is the element we're supposed to break on,
                 // add a line break!
                 if (cbreak && bit === cbreak.break_element) {
@@ -357,7 +385,7 @@ var Unjustifiable = function(options){
                     close_span();
                     if ($bit.attr("class") == "penalty")
                         text.push("-");
-                    text.push($bit.html());
+                    text.push(bittext);
                     linebreaks.pop();
                     text.push('<br />');
 
@@ -365,10 +393,10 @@ var Unjustifiable = function(options){
                     open_span(cbreak);
 
                 } else if ($bit.attr("class") === "box") {
-                    text.push($bit.html());
+                    text.push(bittext);
 
                 } else if ($bit.attr("class") === "glue") {
-                    text.push($bit.html());
+                    text.push(bittext);
                     cbreak.glues_so_far++;
                     if (cbreak.glues_so_far === cbreak.first_count) {
                         // It's time to change to a different word spacing.
@@ -389,12 +417,13 @@ var Unjustifiable = function(options){
             spanify_element(e);
             $(e).css("text-align: justify");
             var line_length = line_lengths(e);
-            $(e).html($(e).html().replace(/> /g, ">"));
+            $(e).html($(e).html().replace(/<\/span> ?/g, "<\/span><br>"));
             $(e).css("text-align", "left");
-            var wordlets = list_wordlets(e);
+            n_times_bigger(e, 10);
+            var wordlets = list_wordlets(e, 10);
             line_length.push(line_length[line_length.length - 1]);
             var best_breaks = find_breaks(wordlets, line_length);
-            despanify_element(e, best_breaks);
+            despanify_element(e, best_breaks, 10);
         });
     };
     unjust.options = options;
