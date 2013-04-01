@@ -11,7 +11,7 @@ var Unjustifiable = function(options){
     options.hyphen_width = options.hyphen_width || 0;
     options.overhang = options.overhang == undefined ? 6 : options.overhang;;
     // This is a cost, which is measured in mostly-meaningless units: px^2
-    options.hyphen_penalty = options.hyphen_penalty || 700;
+    options.hyphen_penalty = options.hyphen_penalty || 1000;
 
     /**
      * PART I: PARSING, HYPHENATING, AND MEASURING THE TEXT
@@ -55,7 +55,8 @@ var Unjustifiable = function(options){
         }
         return spanified_word;
     };
-    var glue_regex = /(&nbsp;|&mdash;|[\—\-]|[\—\-\.\,\/\;\:\)\]\}\?](?:&nbsp;)?)/;
+    // Matches spaces, or word-ending punctuation (+spaces)
+    var glue_regex = /(&nbsp;|(?:&mdash;|&rdquo;|[-,;:"”=\.\/\)\]\}\?])+(?:&nbsp;)*)/;
     var spanify_text = function(text) {
         text = text.replace(/ /g, "&nbsp;");
         var words = text.split(glue_regex);
@@ -95,7 +96,7 @@ var Unjustifiable = function(options){
      * so I've pulled it out into a utility function.
      */
     var walk_elt = function(elt, during, before, after, before_rec, after_rec) {
-        if (before) before(bit);
+        if (before) before(elt);
         _.each(elt.children, function(bit) {
             if (bit.children.length) {
                 if (before_rec) before_rec(bit);
@@ -105,7 +106,7 @@ var Unjustifiable = function(options){
                 if (during) during(bit);
             }
         });
-        if (after) return after(bit);
+        if (after) return after(elt);
     };
 
     /**
@@ -115,13 +116,13 @@ var Unjustifiable = function(options){
      * It's recursive to cope with nested elements (<strong>, <em>, etc.)
      */
 
-    var list_wordlets = function(elt, divisor) {
+    var list_wordlets = function(elt) {
         var list = [];
         walk_elt(elt, function(bit) {
             var wordlet = {type: $(bit).attr("class"),
                        span: bit,
-                       width: bit.offsetWidth / divisor};
-            if (wordlet.type === "glue" && $(bit).html().match("&nbsp;")) {
+                       width: bit.offsetWidth};
+            if (wordlet.type === "glue" && bit.innerHTML.match("&nbsp;")) {
                 wordlet.stretch = options.stretch;
                 wordlet.shrink = options.shrink;
             } else if (wordlet.type === "penalty") {
@@ -143,37 +144,19 @@ var Unjustifiable = function(options){
         var line_start = 0;
         var prev_bit = null;
         walk_elt(elt, function(bit) {
-            if (bit.offsetTop > prev_height) {
+            // HACK. Opera reports words a pixel high or a pixel low sometimes.
+            if (bit.offsetTop - prev_height > 2) {
                 if (prev_bit)
                     list.push(prev_bit.offsetLeft +
                               prev_bit.offsetWidth -
                               line_start -
                               options.overhang);
-                    line_start = bit.offsetLeft;
+                line_start = bit.offsetLeft;
             }
             prev_height = bit.offsetTop;
             prev_bit = bit;
         });
         return list;
-    };
-
-
-    /**
-     * n_times_bigger is a really silly function. Here's the deal:
-     * browsers that zoom -- all browsers, but particularly mobile
-     * browsers, do this stupid thing where they report whole-number
-     * dimensions, but *use* fractional pixel dimensions. This really
-     * messes up the game of measuring word sizes (things can be off
-     * by 5-10 pixels by the end of a line.
-     *
-     * So what we do is we measure *ten times* the string, and divide
-     * by ten. Poor man's floating point.
-     */
-
-    var n_times_bigger = function(elt, times) {
-        walk_elt(elt, function(bit) {
-            bit.innerHTML = _.times(times, function(){return bit.innerHTML;}).join("");
-        });
     };
 
     /**
@@ -350,80 +333,77 @@ var Unjustifiable = function(options){
      *
      * So apologies aside, this is messy but necessary.
      */
-    var despanify_element = function(elt, linebreaks, divisor) {
+    var despanify_element = function(elt, linebreaks) {
         // cbreak is the current line break.
         var cbreak = linebreaks[linebreaks.length - 1];
-        var text = [];
-        var open_span = function(cbreak) {
+        var open_span = function(cbreak, text) {
             text.push('<span style="word-spacing: ' +
                       cbreak.current_spacing +
                       'px">');
         };
-        var close_span = function() {
+        var close_span = function(text) {
             text.push("</span>");
         };
 
-        open_span(cbreak);
-        _.each(elt.children, function(bit) {
-            var $bit = $(bit);
-            // If the node has children, it's not a wordlet. Recurse.
-            if (bit.children.length) {
-                close_span();
+        var recur = function (elt) {
+            var text = [];
+            open_span(cbreak, text);
+            _.each(elt.children, function(bit) {
+                if (bit.children.length) {
+                    close_span(text);
+                    recur(bit);
+                    text.push(bit.outerHTML);
+                    open_span(cbreak, text);
+                } else {
+                    var bittext = bit.innerHTML;
+                    var $bit = $(bit);
+                    // If this element is the element we're supposed to break on,
+                    // add a line break!
+                    if (cbreak && bit === cbreak.break_element) {
+                        // If we're mid-word (a penalty) add a hyphen.
+                        close_span(text);
+                        if ($bit.attr("class") == "penalty")
+                            text.push("-");
+                        text.push(bittext);
+                        linebreaks.pop();
+                        text.push('<br />');
 
-                despanify_element(bit, linebreaks);
-                text.push(bit.outerHTML);
+                        cbreak = linebreaks[linebreaks.length - 1];
+                        open_span(cbreak, text);
 
-                open_span(cbreak);
+                    } else if ($bit.attr("class") === "box") {
+                        text.push(bittext);
 
-            // Otherwise, flatten out the span-per-syllable silliness.
-            } else {
-                var bittext = bit.innerHTML.slice(0, bit.innerHTML.length/divisor);
-                // If this element is the element we're supposed to break on,
-                // add a line break!
-                if (cbreak && bit === cbreak.break_element) {
-                    // If we're mid-word (a penalty) add a hyphen.
-                    close_span();
-                    if ($bit.attr("class") == "penalty")
-                        text.push("-");
-                    text.push(bittext);
-                    linebreaks.pop();
-                    text.push('<br />');
-
-                    cbreak = linebreaks[linebreaks.length - 1];
-                    open_span(cbreak);
-
-                } else if ($bit.attr("class") === "box") {
-                    text.push(bittext);
-
-                } else if ($bit.attr("class") === "glue") {
-                    text.push(bittext);
-                    cbreak.glues_so_far++;
-                    if (cbreak.glues_so_far === cbreak.first_count) {
-                        // It's time to change to a different word spacing.
-                        cbreak.current_spacing = cbreak.rest_spacing;
-                        close_span();
-                        open_span(cbreak);
+                    } else if ($bit.attr("class") === "glue") {
+                        text.push(bittext.replace("&nbsp;", " "));
+                        cbreak.glues_so_far++;
+                        if (cbreak.glues_so_far === cbreak.first_count) {
+                            // It's time to change to a different word spacing.
+                            cbreak.current_spacing = cbreak.rest_spacing;
+                            close_span(text);
+                            open_span(cbreak, text);
+                        }
                     }
                 }
-            }
-        });
-        close_span();
-        $(elt).html(text.join(""));
+            });
+            close_span(text);
+            $(elt).html(text.join(""));
+        };
+        recur(elt);
     };
 
     var unjust = function($thing) {
         var a = $($thing);
         a.each(function(i, e) {
             spanify_element(e);
-            $(e).css("text-align: justify");
+            $(e).css("text-align", "justify");
             var line_length = line_lengths(e);
-            $(e).html($(e).html().replace(/<\/span> ?/g, "<\/span><br>"));
+            //$(e).html($(e).html().replace(/\/span> ?/g, "/span><br>"));
             $(e).css("text-align", "left");
-            n_times_bigger(e, 10);
-            var wordlets = list_wordlets(e, 10);
+            var wordlets = list_wordlets(e);
             line_length.push(line_length[line_length.length - 1]);
             var best_breaks = find_breaks(wordlets, line_length);
-            despanify_element(e, best_breaks, 10);
+            despanify_element(e, best_breaks);
         });
     };
     unjust.options = options;
