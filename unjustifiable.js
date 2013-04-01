@@ -58,7 +58,8 @@ var Unjustifiable = function(options){
     // Matches spaces, or word-ending punctuation (+spaces)
     var glue_regex = /(&nbsp;|(?:&mdash;|&rdquo;|[-,;:"”=\.\/\)\]\}\?])+(?:&nbsp;)*)/;
     var spanify_text = function(text) {
-        text = text.replace(/ /g, "&nbsp;");
+        text = text.replace(/\n ?/g, " ");
+        text = text.replace(/ +/g, "&nbsp;");
         var words = text.split(glue_regex);
         var spanned_words = _.map(words, function(word, i) {
             if (word.match(glue_regex)) {
