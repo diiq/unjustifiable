@@ -1,3 +1,16 @@
+/**
+ * Unjustifiable, by Sam Bleckley (s@diiq.org, @diiq)
+ *
+ * Justifies text more beautifully than CSS alone.
+ *
+ * Use:
+ *
+ * var justify = Unjustifiable({ /* options * / });
+ * justify("p"); // or any jquery selector
+ *
+ * Visit http://github.com/diiq/unjustifiable to learn more.
+ */
+
 var Unjustifiable = function(options){
     // Defaults.
     // If no hyphenator is provided, don't hyphenate.
@@ -5,11 +18,10 @@ var Unjustifiable = function(options){
         return [w];
     };
     // All measurements in px.
-    options.space = options.space || 4;
-    options.stretch = options.stretch || 5;
-    options.shrink = options.shrink || -1;
+    options.stretch = options.stretch || 10;
+    options.shrink = options.shrink || -1.5;
     options.hyphen_width = options.hyphen_width || 0;
-    options.overhang = options.overhang == undefined ? 6 : options.overhang;;
+    options.overhang = options.overhang == undefined ? 10 : options.overhang;
     // This is a cost, which is measured in mostly-meaningless units: px^2
     options.hyphen_penalty = options.hyphen_penalty || 1000;
 
@@ -94,20 +106,18 @@ var Unjustifiable = function(options){
     };
 
     /** Walking the DOM in this particular way happens several times,
-     * so I've pulled it out into a utility function.
+     * so I've pulled it out into a utility function. If a node has children
+     * (not a text node, or an image, or anything),
      */
-    var walk_elt = function(elt, during, before, after, before_rec, after_rec) {
-        if (before) before(elt);
+    var walk_elt = function(elt, during) {
         _.each(elt.children, function(bit) {
+            if ($(bit).hasClass("unjustifiable-ignore")) return;
             if (bit.children.length) {
-                if (before_rec) before_rec(bit);
-                var rec = walk_elt(bit, during, before, after, before_rec, after_rec);
-                if (after_rec) after_rec(bit, rec);
+                var rec = walk_elt(bit, during);
             } else {
-                if (during) during(bit);
+                during(bit);
             }
         });
-        if (after) return after(elt);
     };
 
     /**
@@ -210,6 +220,11 @@ var Unjustifiable = function(options){
                                            index);
             var compression =  line_length - measure.width;
 
+            // if this is the last wordlet, ignore stretch.
+            if (index == wordlets.length - 1) {
+                compression = Math.min(compression, 0);
+            }
+
             if (compression > measure.shrink &&
                 compression < measure.stretch) {
                 var cost = previous_break.cost;
@@ -237,7 +252,10 @@ var Unjustifiable = function(options){
                     };
             }
 
-            if ((measure.width + measure.shrink) < line_length)
+            // If the previous break is still "in range", keep it; but if this
+            // is the last wordlet, then we must break here.
+            if ((measure.width + measure.shrink) < line_length &&
+                 index < wordlets.length - 1)
                 old_breaks.push(previous_break);
         });
         if (new_break)
