@@ -8,19 +8,10 @@ Unjustifiable can also cooperate with a hyphenating function; the
 example uses the [Hypher](https://github.com/bramstein/hypher)
 hyphenator.
 
-###Internally###
-
-It's a dynamic programming algorithm, like Knuth and Plass, but it's
-faster than Knuth and Plass. The speed increase comes by accepting
-suboptimal results for one part of its cost function: the difference
-in compression between a line and the succeeding line.
-
-Given elements that can be CSS justified, Unjustifiable will measure
-the line-lengths all on its own; so floats, indentations, and so on,
-all work correctly without additional information.
-
-It is also aware of any style changes, and works around sub-elements
--- so tags like `<strong>`, `<em>`, and `code` are handled correctly.
+Unjustifiable works beautifully on Webkit browsers, well on Opera and
+Firefox, and acceptably on IE8 & 9. It **will leave a ragged right on
+mobile browsers**, and it's up to you to decide what to
+do about that.
 
 ###Usage###
 
@@ -51,6 +42,20 @@ justified.
 JQuery -- no need for anything bleeding-edge.
 
 Underscore.js -- because I like data-flow programming.
+
+###Internally###
+
+It's a dynamic programming algorithm, like Knuth and Plass, but it's
+faster than Knuth and Plass. The speed increase comes by accepting
+suboptimal results for one part of its cost function: the difference
+in compression between a line and the succeeding line.
+
+Given elements that can be CSS justified, Unjustifiable will measure
+the line-lengths all on its own; so floats, indentations, and so on,
+all work correctly without additional information.
+
+It is also aware of any style changes, and works around sub-elements
+-- so tags like `<strong>`, `<em>`, and `code` are handled correctly.
 
 ###Sandwich###
 
