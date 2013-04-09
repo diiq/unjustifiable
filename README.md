@@ -1,8 +1,8 @@
 ##Unjustifiable##
 
 Text justification on the web is really hideous. See the
-[sample](http://diiq.org/unjustifiable/example.html) for a sample of
-how unjustifiable.js does it better.
+[sample](http://diiq.org/unjustifiable/example/example.html) for a
+sample of how unjustifiable.js does it better.
 
 Unjustifiable can also cooperate with a hyphenating function; the
 example uses the [Hypher](https://github.com/bramstein/hypher)
