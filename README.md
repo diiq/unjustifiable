@@ -21,7 +21,7 @@ dependencies (underscore and jquery), and then
 
 ```
  var justify = Unjustifiable({
-
+     /* options */
  });
  justify("p");
 ```
