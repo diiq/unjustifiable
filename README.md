@@ -1,8 +1,18 @@
 ##Unjustifiable##
 
-Text justification on the web is really hideous. See the
-[sample](http://diiq.org/unjustifiable/example/example.html) for a
-sample of how unjustifiable.js does it better.
+Text justification on the web is really hideous. Browsers choose to
+naively cram as much as they can on each line, but this leaves "loose"
+lines of text, with great gaping holes.
+
+For hundreds of years, well justified text was considered masterful
+and beautiful; only in the era of the browser have designers turned
+thier back on it -- and with good reason. On a browser, justified text
+is ugly.
+
+Was ugly.
+
+See the [sample](http://diiq.org/unjustifiable/example/example.html)
+for a sample of how unjustifiable.js makes it better.
 
 Unjustifiable can also cooperate with a hyphenating function; the
 example uses the [Hypher](https://github.com/bramstein/hypher)
