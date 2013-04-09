@@ -1,8 +1,6 @@
 $(document).ready(function() {
     var justify = Unjustifiable({
-        hyphen_width: 0,
-        overhang: 8,
-        stretch: 10,
+        overhang: 8
     });
 
     $(".unjustifiable_full").append($(".css").html());
