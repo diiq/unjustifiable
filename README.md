@@ -11,33 +11,26 @@ is ugly.
 
 Was ugly.
 
-See the [sample](http://diiq.org/unjustifiable/example/example.html)
-for a sample of how unjustifiable.js makes it better.
+See the [my blog](http://diiq.org/#!/blog/church-of-interruption)
+for a sample of how unjustifiable makes it better.
 
-Unjustifiable can also cooperate with a hyphenating function; the
-example uses the [Hypher](https://github.com/bramstein/hypher)
-hyphenator.
+Unjustifiable can cooperate with a hyphenating function; I've tucked
+in [Hypher](https://github.com/bramstein/hypher) because that's how I
+use it.
 
 Unjustifiable works beautifully on Webkit browsers, well on Opera and
-Firefox, and acceptably on IE8 & 9. It **will leave a ragged right on
-mobile browsers**, and it's up to you to decide what to
+Firefox, and acceptably on IE8 & 9. It **will leave a slightly ragged
+right on some mobile browsers**, and it's up to you to decide what to
 do about that.
 
 ###Usage###
 
-If you're not looking for hyphenation, using Unjustifiable is as easy
-as including the single file unjustifiable.js, and its two
-dependencies (underscore and jquery), and then
-
-```
- var justify = Unjustifiable({
-     /* options */
- });
- justify("p");
-```
-
-Where `"p"` is a jQuery selector for those elements you'd like
-justified.
+This was all written for my personal use. It's in coffeescript and has
+a sloppy angular directive attached because that's what was easy for
+me. This is simply a copy of the directory on my site that contains
+the justification code. If you're interested in helping generalize
+this so that it is easy to use, package-managed, and all that jazz,
+Ddrop me a note -- or just open a pull request.
 
 ###Options###
 
@@ -49,9 +42,7 @@ justified.
 
 ###Dependencies###
 
-JQuery -- no need for anything bleeding-edge.
-
-Underscore.js -- because I like data-flow programming.
+Requires underscore or lodash.
 
 ###Internally###
 
@@ -66,10 +57,3 @@ all work correctly without additional information.
 
 It is also aware of any style changes, and works around sub-elements
 -- so tags like `<strong>`, `<em>`, and `code` are handled correctly.
-
-###Sandwich###
-
-I have written this instead of eating today and I am very hungry. I'm
-going to get a sandwich now.
-
-https://www.gittip.com/diiq/
