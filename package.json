@@ -1,0 +1,23 @@
+{
+  "name": "unjustifiable",
+  "version": "1.0.0",
+  "description": "Fast (enough) and beautiful text justification for the web",
+  "main": "unjustifiable.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diiq/unjustifiable.git"
+  },
+  "keywords": [
+    "justification",
+    "typography"
+  ],
+  "author": "Sam Bleckley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/diiq/unjustifiable/issues"
+  },
+  "homepage": "https://github.com/diiq/unjustifiable#readme"
+}
