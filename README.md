@@ -29,19 +29,21 @@ all work correctly without additional information.
 It is also aware of any style changes, and works around sub-elements
 -- so inline tags like `<strong>`, `<em>`, and `<code>` are handled correctly.
 
-### Installation 
+## Installation 
 
 ```
 yarn add unjustifiable
 ```
 
-### Usage
+## Usage
 
 ```javascript
 const justify = unjustifiable();
 document.querySelectorAll(".content p");
 elts.forEach(justify);
 ```
+
+### Options
 
 The `unjustifiable` function takes an optional options object. Defaults are shown below:
 
@@ -94,11 +96,8 @@ const options = unjustifiable({
 - hyphenator: a function that takes a word, and returns an array of syllables.
 - hyphen_penalty: the penalty for breaking a word and hyphenating. 1000 is default.
 
-### Dependencies
 
-Requires underscore or lodash.
-
-### Internally
+## Internally
 
 It's a dynamic programming algorithm, like Knuth and Plass, but it's
 faster than Knuth and Plass. The speed increase comes by accepting
