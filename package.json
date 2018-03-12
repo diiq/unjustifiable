@@ -2,9 +2,9 @@
   "name": "unjustifiable",
   "version": "1.0.0",
   "description": "Fast (enough) and beautiful text justification for the web",
-  "main": "unjustifiable.js",
+  "main": "lib/unjustifiable.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src -d lib; uglifyjs --compress --mangle -- lib/unjustifiable.js > lib/unjustifiable.min.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/diiq/unjustifiable/issues"
   },
-  "homepage": "https://github.com/diiq/unjustifiable#readme"
+  "homepage": "https://github.com/diiq/unjustifiable#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "uglify-js": "^3.3.14"
+  }
 }
