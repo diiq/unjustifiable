@@ -25,12 +25,8 @@ do about that.
 
 ###Usage###
 
-This was all written for my personal use. It's in coffeescript and has
-a sloppy angular directive attached because that's what was easy for
-me. This is simply a copy of the directory on my site that contains
-the justification code. If you're interested in helping generalize
-this so that it is easy to use, package-managed, and all that jazz,
-Ddrop me a note -- or just open a pull request.
+If you're interested in helping generalize
+this so that it is easy to use, package-managed, and all that jazz, drop me a note -- or just open a pull request.
 
 ###Options###
 
