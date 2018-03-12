@@ -39,8 +39,8 @@ yarn add unjustifiable
 
 ```javascript
 const justify = unjustifiable();
-document.querySelectorAll(".content p");
-elts.forEach(justify);
+const elements = document.querySelectorAll(".content p");
+elements.forEach(justify);
 ```
 
 ### Options
