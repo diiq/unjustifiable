@@ -2,7 +2,7 @@
   "name": "unjustifiable",
   "version": "1.0.0",
   "description": "Fast (enough) and beautiful text justification for the web",
-  "main": "lib/unjustifiable.js",
+  "main": "lib/unjustifiable.min.js",
   "scripts": {
     "build": "babel src -d lib; uglifyjs --compress --mangle -- lib/unjustifiable.js > lib/unjustifiable.min.js"
   },
