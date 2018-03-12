@@ -1,26 +1,29 @@
 # Unjustifiable
 
-Text justification on the web is really hideous. Browsers choose to
-naively cram as much as they can on each line, but this leaves "loose"
-lines of text, with great gaping holes.
+Text justification on the web is really hideous. Browsers choose to naively cram
+as much as they can on each line, but this greedy algorithm leaves "loose" lines
+of text, with great gaping holes.
 
-For hundreds of years, well-justified text was considered masterful
-and beautiful; only in the era of the browser have designers turned
-their back on it -- and with good reason. On a browser, justified text
-is ugly.
+For hundreds of years, well-justified text was considered masterful and
+beautiful; only in the era of the browser have designers turned their back on it
+-- and with good reason. On a browser, justified text is ugly.
 
 Was ugly.
 
-See the [my blog](http://diiq.org/#!/blog/interaction-words)
-for a sample of how unjustifiable makes it better.
+With unjustifiable, text can look like this: ![Example](./sample.png)
 
-Unjustifiable can cooperate with a hyphenating function; I recommend [Hypher](https://github.com/bramstein/hypher) (that's what I
-use.)
+Note the dangling punctuation, and that text can change styles inline -- bold
+words are wider, but the text is still properly aligned.
 
-Unjustifiable works beautifully on Webkit browsers, well on Opera and
-Firefox, and Edge. . It **will leave a slightly ragged
-right on some mobile browsers**, and it's up to you to decide what to
-do about that.
+See [my blog](http://diiq.org/#!/blog/interaction-words) for a full-length of
+how unjustifiable makes justified text better.
+
+Unjustifiable works best when paired with a hyphenating function; I recommend
+[Hypher](https://github.com/bramstein/hypher) (that's what I use.)
+
+Unjustifiable works beautifully on Chrome and safai, and well enough on Firefox,
+and Edge. It **will leave a slightly ragged right on some mobile browsers**, and
+it's up to you to decide what to do about that.
 
 Unjustifiable will measure
 the line-lengths all on its own; so floats, css indentations, and so on
