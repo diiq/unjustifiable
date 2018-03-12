@@ -4,7 +4,7 @@ Text justification on the web is really hideous. Browsers choose to
 naively cram as much as they can on each line, but this leaves "loose"
 lines of text, with great gaping holes.
 
-For hundreds of years, well justified text was considered masterful
+For hundreds of years, well-justified text was considered masterful
 and beautiful; only in the era of the browser have designers turned
 their back on it -- and with good reason. On a browser, justified text
 is ugly.
@@ -48,7 +48,7 @@ elements.forEach(justify);
 The `unjustifiable` function takes an optional options object. Defaults are shown below:
 
 ```javascript
-options = {v
+options = {
   stretch: 15,
   shrink: -1,
   overhang: 20,
