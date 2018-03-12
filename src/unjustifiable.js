@@ -341,6 +341,13 @@ unjustifiable = function(options) {
     const newLine = (elts) => {
       const elt = document.createElement("br");
       elt.setAttribute("aria-hidden", "true");
+      elt.style.userSelect = "none";
+      elts.push(elt);
+    }
+    const hyphen = (elts) => {
+      const elt = document.createElement("span");
+      elt.innerText = "-"
+      elt.style.userSelect = "none";
       elts.push(elt);
     }
 
@@ -358,9 +365,13 @@ unjustifiable = function(options) {
           let bittext = bit.innerHTML;
           if (cbreak && bit === cbreak.breakElement) {
             if (bit.getAttribute("class") === "penalty") {
-              pushContent("-");
-            }
-            pushContent(bittext); closeSpan(elts); newLine(elts);
+              closeSpan(elts);
+              hyphen(elts);
+            } else {
+              pushContent(bittext);
+              closeSpan(elts);
+            } 
+            newLine(elts);
             linebreaks.pop();
             cbreak = linebreaks[linebreaks.length - 1];
             openSpan(cbreak);
