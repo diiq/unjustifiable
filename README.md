@@ -88,15 +88,6 @@ const options = unjustifiable({
 });
 ```
 
-### Options 
-
-- overhang: the number of pixels to leave at the end of each line.
-- stretch: the max amount of additional interword spacing.
-- shrink: the max amount interword spacing can be decreased.
-- hyphenator: a function that takes a word, and returns an array of syllables.
-- hyphen_penalty: the penalty for breaking a word and hyphenating. 1000 is default.
-
-
 ## Internally
 
 It's a dynamic programming algorithm, like Knuth and Plass, but it's
