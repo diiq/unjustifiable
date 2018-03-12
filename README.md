@@ -11,14 +11,14 @@ is ugly.
 
 Was ugly.
 
-See the [my blog](http://diiq.org/#!/blog/church-of-interruption)
+See the [my blog](http://diiq.org/#!/blog/interaction-words)
 for a sample of how unjustifiable makes it better.
 
 Unjustifiable can cooperate with a hyphenating function; I recommend [Hypher](https://github.com/bramstein/hypher) (that's what I
 use.)
 
 Unjustifiable works beautifully on Webkit browsers, well on Opera and
-Firefox, and acceptably on IE. It **will leave a slightly ragged
+Firefox, and Edge. . It **will leave a slightly ragged
 right on some mobile browsers**, and it's up to you to decide what to
 do about that.
 
