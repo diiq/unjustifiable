@@ -379,8 +379,10 @@ unjustifiable = function(options) {
             pushContent(bittext);
           } else if (bit.getAttribute("class") === "glue") {
             pushContent(bittext.replace("&nbsp;", " "));
+          } else {
+            elts.push(bit);
           }
-        }
+        } 
       });
       closeSpan(elts);
 
@@ -402,8 +404,12 @@ unjustifiable = function(options) {
         if (bit.children.length) {
           elts.push(recur(bit));
         } else {
-          bittext = bit.innerHTML.replace("&nbsp;", " ");
-          elts.push(bittext);
+          if (["penalty", "box", "glue"].indexOf(bit.getAttribute("class")) >= 0) {
+            bittext = bit.innerHTML.replace("&nbsp;", " ");
+            elts.push(bittext);
+          } else {
+            elts.push(bit);
+          }
         }
       });
       // SO COSTLY. DO WITH CREATE ELEMENT.
