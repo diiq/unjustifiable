@@ -13,10 +13,10 @@ Was ugly.
 With unjustifiable, text can look like this: ![Example](./sample.png)
 
 Note the dangling punctuation, and that text can change styles inline -- bold
-words are wider, but the text is still properly aligned.
+words are wider, but the text is still properly aligned. Floats and other
+incursions to the text are also supported.
 
-See [my blog](http://diiq.org/#!/blog/interaction-words) for a full-length of
-how unjustifiable makes justified text better.
+See [my blog](http://diiq.org/writing/interaction-words.html) for a live example.
 
 Unjustifiable works best when paired with a hyphenating function; I recommend
 [Hypher](https://github.com/bramstein/hypher) (that's what I use.)
@@ -25,14 +25,7 @@ Unjustifiable works beautifully on Chrome and safai, and well enough on Firefox,
 and Edge. It **will leave a slightly ragged right on some mobile browsers**, and
 it's up to you to decide what to do about that.
 
-Unjustifiable will measure
-the line-lengths all on its own; so floats, css indentations, and so on
-all work correctly without additional information.
-
-It is also aware of any style changes, and works around sub-elements
--- so inline tags like `<strong>`, `<em>`, and `<code>` are handled correctly.
-
-## Installation 
+## Installation
 
 ```
 yarn add unjustifiable
@@ -48,7 +41,8 @@ elements.forEach(justify);
 
 ### Options
 
-The `unjustifiable` function takes an optional options object. Defaults are shown below:
+The `unjustifiable` function takes an optional options object. Defaults are
+shown below:
 
 ```javascript
 options = {
@@ -64,23 +58,25 @@ options = {
 const justify = unjustifiable(options);
 ```
 
-#### Stretch
+#### stretch
 
 A measure of the default ability for a space to stretch wider, in px.
 
-#### Shrink
+#### shrink
 
 A measure of the default ability for a space to shrink smaller, in px.
 
-#### Overhang
+#### overhang
 
-The amount of space, in px, left for punctuation to dangle attractively over the right margin.
+The amount of space, in px, left for punctuation to dangle attractively over the
+right margin.
 
-#### Hyphen penalty
+#### HyphenPenalty
 
-The bigger this number is, the less likely Unjustifible is to break a line mid-word.
+The bigger this number is, the less likely Unjustifible is to break a line
+mid-word.
 
-#### Hyphenator
+#### hyphenator
 
 To use Hypher for the hyphenator, install Hypher then:
 
