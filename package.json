@@ -1,6 +1,6 @@
 {
   "name": "unjustifiable",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Fast (enough) and beautiful text justification for the web",
   "main": "lib/unjustifiable.min.js",
   "scripts": {
