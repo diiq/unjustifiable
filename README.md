@@ -45,7 +45,7 @@ The `unjustifiable` function takes an optional options object. Defaults are
 shown below:
 
 ```javascript
-options = {
+const options = {
   stretch: 15,
   shrink: -1,
   overhang: 20,
@@ -82,7 +82,7 @@ To use Hypher for the hyphenator, install Hypher then:
 
 ```javascript
 const hyph = new Hypher(en_us);
-const options = unjustifiable({
+const justify = unjustifiable({
   hyphenator: function(w) { return hyph.hyphenate(w); }
 });
 ```
