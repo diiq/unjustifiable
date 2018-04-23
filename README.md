@@ -16,7 +16,7 @@ Note the dangling punctuation, and that text can change styles inline -- bold
 words are wider, but the text is still properly aligned. Floats and other
 incursions to the text are also supported.
 
-See [my blog](http://diiq.org/writing/interaction-words.html) for a live example.
+See [my blog](http://sambleckley.com/writing/interaction-words.html) for a live example.
 
 Unjustifiable works best when paired with a hyphenating function; I recommend
 [Hypher](https://github.com/bramstein/hypher) (that's what I use.)
