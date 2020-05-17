@@ -8,7 +8,7 @@ For hundreds of years, well-justified text was considered masterful and
 beautiful; only in the era of the browser have designers turned their back on it
 -- and with good reason. On a browser, justified text is ugly.
 
-Was ugly.
+*Was* ugly.
 
 With unjustifiable, text can look like this: ![Example](./sample.png)
 
@@ -58,6 +58,18 @@ const options = {
 const justify = unjustifiable(options);
 ```
 
+#### hyphenator
+
+To use [Hypher](https://github.com/bramstein/hypher) for the hyphenator, install
+Hypher, and then:
+
+```javascript
+const hyph = new Hypher(en_us);
+const justify = unjustifiable({
+  hyphenator: function(w) { return hyph.hyphenate(w); }
+});
+```
+
 #### stretch
 
 A measure of the default ability for a space to stretch wider, in px.
@@ -76,16 +88,6 @@ right margin.
 The bigger this number is, the less likely Unjustifible is to break a line
 mid-word.
 
-#### hyphenator
-
-To use Hypher for the hyphenator, install Hypher then:
-
-```javascript
-const hyph = new Hypher(en_us);
-const justify = unjustifiable({
-  hyphenator: function(w) { return hyph.hyphenate(w); }
-});
-```
 
 ## Internally
 

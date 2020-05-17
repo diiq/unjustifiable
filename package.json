@@ -1,6 +1,6 @@
 {
   "name": "unjustifiable",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Fast (enough) and beautiful text justification for the web",
   "main": "lib/unjustifiable.min.js",
   "scripts": {
@@ -21,9 +21,10 @@
   },
   "homepage": "https://github.com/diiq/unjustifiable#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "uglify-js": "^3.3.14"
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "uglify-js": "^3.9.3"
   }
 }

@@ -16,7 +16,7 @@ unjustifiable = function(options) {
   Spanify-ing is the process of wrapping each syllable in a
   boxSpan, each space in a glueSpan, and each soft-break in a
   penaltySpan.
-  
+
   In order to get accurate measurements of each syllable's width,
   even in places where they are bold, or italic, or a different font
   or whatever, wrap each syllable in a <span> temporarily. Since I'm
@@ -37,12 +37,10 @@ unjustifiable = function(options) {
 
   const glueSpan = spanMaker("glue");
   const boxSpan = spanMaker("box");
-  const punctuationSpan = spanMaker("punctuation");
   const penaltySpan = spanMaker("penalty");
 
   const spanifyWord = function(word) {
     const syllables = options.hyphenator(word);
-    const spanifiedWord = boxSpan(syllables[0]);
     const parts = [];
     syllables.forEach((s, i) => {
       if (i > 0) parts.push(penaltySpan());
@@ -52,7 +50,7 @@ unjustifiable = function(options) {
   };
 
   const glueRegex = /(&nbsp;|(?:&mdash;|&rdquo;|[-,;:"”=\.\/\)\]\}\?])+(?:&nbsp;)*)/;
-  
+
   const spanifyText = function(text) {
     text = text.replace(/\n ?/g, " ").replace(/ +/g, "&nbsp;");
     const words = text.split(glueRegex);
@@ -142,12 +140,11 @@ unjustifiable = function(options) {
    */
   const lineLengths = function(elt) {
     const list = [];
-    var prevHeight = 0;
     var lineStart = 0;
     var prevOffset = null;
     walkElt(elt, bit => {
       const offset = bit.getClientRects()[0];
-      if (prevOffset && offset.top - prevOffset.top > 2) {
+      if (prevOffset && offset.top - prevOffset.top > offset.height) {
         list.push(prevOffset.right - lineStart - options.overhang);
         lineStart = offset.left;
       }
@@ -281,9 +278,9 @@ unjustifiable = function(options) {
   The linked list that findBreaks produces is kinda difficult to work
   with; this function munges it into a cleaner array, with useful
   information about spacing.
-  
+
   Each element in the resulting list has the following info:
-  
+
   - breakElement: the wordlet on which to break the line.
   - firstSpacing: the word-spacing for the first n words
   - restSpacing: the wordSpacing for the remaining words
@@ -317,13 +314,13 @@ unjustifiable = function(options) {
   (two because we have to simulate sub-pixel word-spacing, so one span
   might be 1px spacing and the other 2, to make an average
   one-point-something.
-  
+
   It is horrible because of a particular edge-case: where the line break
   occurs in the middle of, for instance, a <strong> tag. In that
   particular case, there must be more than two spans, to take care of
   both the text inside the strong tag (which will have two or more
   different spacings) and the text oustide it.
-  
+
   So apologies aside, this is messy but necessary.
    */
   const despanifyElement = function(elt, linebreaks) {
@@ -370,7 +367,7 @@ unjustifiable = function(options) {
             } else {
               pushContent(bittext);
               closeSpan(elts);
-            } 
+            }
             newLine(elts);
             linebreaks.pop();
             cbreak = linebreaks[linebreaks.length - 1];
@@ -382,7 +379,7 @@ unjustifiable = function(options) {
           } else {
             elts.push(bit);
           }
-        } 
+        }
       });
       closeSpan(elts);
 
