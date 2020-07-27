@@ -81,7 +81,18 @@ A measure of the default ability for a space to shrink smaller, in px.
 #### overhang
 
 The amount of space, in px, left for punctuation to dangle attractively over the
-right margin.
+margins. It's usually best to style your textblocks with
+
+```css
+p {
+  margin-right: -20px;
+  margin-left: -20px;
+}
+```
+
+(or whatever the overhang is) to ensure that the justified line of the text
+appears where you expect, and the hanging punctuation... hangs.
+
 
 #### HyphenPenalty
 
