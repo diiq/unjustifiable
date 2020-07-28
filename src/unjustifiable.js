@@ -57,7 +57,7 @@ unjustifiable = function unjustifiable(options) {
 
   var glueRegex = /(&nbsp;|(?:&mdash;|&rdquo;|[-,;:"”=\.\/\)\]\}\?])+(?:&nbsp;)*)/;
   var splitRegex = /(&nbsp;|(?:&mdash;|&rdquo;|&ldquo;|&lsquo;|[-,;:"“”=\.\/\)\]\}\?])+(?:&nbsp;)*)/;
-  var openingPunctuationRegex = /(?<=&nbsp;)&ldquo;|&lsquo;|[“"']/;
+  var openingPunctuationRegex = /(&ldquo;|&lsquo;|[“"'])+/;
 
   var spanifyText = function spanifyText(text) {
     text = text.replace(/\n ?/g, " ").replace(/ +/g, "&nbsp;");
@@ -364,14 +364,17 @@ unjustifiable = function unjustifiable(options) {
     if (!linebreaks) return despanifyNoJustify(elt);
     var curElt = null;
 
-    function openSpan(cbreak) {
+    function openSpan(cbreak, padding) {
       var elt = document.createElement("span");
       elt.style.wordSpacing = cbreak.spacing + "px";
-      elt.style.paddingLeft = options.overhang + "px";
+      if (padding) {
+        elt.style.paddingLeft = options.overhang + "px";
+      }
       curElt = elt;
     };
 
     function closeSpan(elts) {
+      if (curElt.innerHTML == "") { return }
       return elts.push(curElt);
     };
 
@@ -394,16 +397,15 @@ unjustifiable = function unjustifiable(options) {
     };
 
     var cbreak = linebreaks[linebreaks.length - 1];
-    var newline = true;
-
+    var newLineStarted = true;
     var recur = function recur(elt) {
       var elts = [];
-      openSpan(cbreak);
+      openSpan(cbreak, newLineStarted);
       Array.from(elt.children).forEach(function (bit) {
         if (bit.children.length) {
           closeSpan(elts);
           elts.push(recur(bit));
-          openSpan(cbreak);
+          openSpan(cbreak, newLineStarted);
         } else {
           var bittext = bit.innerHTML;
 
@@ -419,14 +421,15 @@ unjustifiable = function unjustifiable(options) {
             newLine(elts);
             linebreaks.pop();
             cbreak = linebreaks[linebreaks.length - 1];
-            newline = true;
-            openSpan(cbreak);
+            newLineStarted = true;
+            openSpan(cbreak, newLineStarted);
           } else {
             if (bit.getAttribute("class") === "box") {
-            pushContent(bittext);
+              pushContent(bittext);
             } else if (bit.getAttribute("class") === "opening-punctuation") {
               pushContent(bittext);
-              if (newline) {
+
+              if (newLineStarted) {
                 curElt.style.paddingLeft = options.overhang - bit.getClientRects()[0].width + "px";
               }
             } else if (bit.getAttribute("class") === "glue") {
@@ -434,7 +437,7 @@ unjustifiable = function unjustifiable(options) {
             } else {
               elts.push(bit);
             }
-            newline = false;
+            newLineStarted = false;
           }
         }
       });
@@ -450,13 +453,16 @@ unjustifiable = function unjustifiable(options) {
   };
 
   var despanifyNoJustify = function despanifyNoJustify(elt) {
+    var newline = true;
+    var depth = 0;
     var recur = function recur(elt) {
       var elts = [];
-      var newline = true;
       var overhang = options.overhang;
       Array.from(elt.children).forEach(function (bit) {
         if (bit.children.length) {
+          depth++;
           elts.push(recur(bit));
+          depth--;
         } else {
           if (bit.getAttribute("class") === "opening-punctuation") {
             if (newline) {
@@ -475,7 +481,9 @@ unjustifiable = function unjustifiable(options) {
       }); // SO COSTLY. DO WITH CREATE ELEMENT.
 
       var clonedElt = elt.cloneNode(false);
-      clonedElt.style.paddingLeft = overhang + "px"
+      if (depth == 0){
+        clonedElt.style.paddingLeft = overhang + "px"
+      }
       clonedElt.innerHTML = "";
       clonedElt.append.apply(clonedElt, elts);
       return clonedElt;
